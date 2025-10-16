@@ -1,0 +1,11 @@
+name: Push Only Check
+
+on:
+  push:
+
+jobs:
+  simple_test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "This workflow ran on a push event at $(date) and successfully checked out the code."
