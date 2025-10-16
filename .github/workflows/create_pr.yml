@@ -12,12 +12,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         
+      - id: timestamp
+        run: echo "current_time=$(date '+%Y-%m-%d %H:%M:%S')" >> $GITHUB_OUTPUT
+        
       - run: date +%Y-%m-%d-%H-%M-%S >> automated_data.txt
         
       - uses: peter-evans/create-pull-request@v6
         with:
           commit-message: 'feat: Automated data update'
-          title: 'Automated Data Update'
-          body: 'This PR was created automatically.'
+          title: 'Automated Data Update: ${{ steps.timestamp.outputs.current_time }}'
+          body: 'This PR was created automatically on ${{ steps.timestamp.outputs.current_time }}.'
           branch: 'feature/automated-update'
           base: 'main'
