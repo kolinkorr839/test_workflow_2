@@ -12,7 +12,8 @@ jobs:
     steps:
       # 1. Checkout main first (needed for the peter-evans action to run)
       - uses: actions/checkout@v4
-        token: ${{ secrets.PAT_TOKEN }}
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
         
       - id: timestamp
         run: echo "current_time=$(date '+%Y-%m-%d-%H-%M-%S')" >> $GITHUB_OUTPUT
