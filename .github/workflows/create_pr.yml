@@ -26,16 +26,16 @@ jobs:
           branch: 'feature/automated-update-${{ steps.timestamp.outputs.current_time }}'
           base: 'main'
 
-      - name: Force an Empty Commit
+      # FIX: Combining the git commands into one 'run' step and pushing correctly.
+      - name: Force an Empty Commit and Push
         run: |
+          # 1. Configure Git (essential for the commit)
           git config user.name github-actions
           git config user.email github-actions@github.com
+
+          # 2. Make the empty commit
           git commit --allow-empty -m "Force a commit"
           
-      - name: Push Empty Commit to PR Branch
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const branchName = 'feature/automated-update-${{ steps.timestamp.outputs.current_time }}';
-            exec.exec('git', ['push', 'origin', branchName]);
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # 3. Push the current branch back to the origin
+          # The 'peter-evans' action has already checked out the new branch.
+          git push origin HEAD
