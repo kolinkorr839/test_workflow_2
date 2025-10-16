@@ -17,10 +17,25 @@ jobs:
         
       - run: date +%Y-%m-%d-%H-%M-%S >> automated_data.txt
         
-      - uses: peter-evans/create-pull-request@v6
+      - id: create_pr
+        uses: peter-evans/create-pull-request@v6
         with:
           commit-message: 'feat: Automated data update'
           title: 'Automated Data Update: ${{ steps.timestamp.outputs.current_time }}'
           body: 'This PR was created automatically on ${{ steps.timestamp.outputs.current_time }}.'
           branch: 'feature/automated-update-${{ steps.timestamp.outputs.current_time }}'
           base: 'main'
+
+      - name: Force an Empty Commit
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git commit --allow-empty -m "Force a commit"
+          
+      - name: Push Empty Commit to PR Branch
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const branchName = 'feature/automated-update-${{ steps.timestamp.outputs.current_time }}';
+            exec.exec('git', ['push', 'origin', branchName]);
+          github-token: ${{ secrets.GITHUB_TOKEN }}
