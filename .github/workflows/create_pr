@@ -1,0 +1,17 @@
+name: Simple PR Check
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  pr_preparation_check:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: Confirm Action Ran
+        run: echo "Workflow step ran successfully. This is where a PR creation script would go."
