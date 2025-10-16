@@ -1,18 +1,23 @@
-name: Simple PR Check
+name: Automated PR Creator
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
 
 jobs:
-  pr_preparation_check:
+  create_pull_request:
     runs-on: ubuntu-latest
-    
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         
-      - name: Confirm Action Ran
-        run: echo "Workflow step ran successfully. This is where a PR creation script would go."
+      - run: date +%Y-%m-%d-%H-%M-%S >> automated_data.txt
+        
+      - uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: 'feat: Automated data update'
+          title: 'Automated Data Update'
+          body: 'This PR was created automatically.'
+          branch: 'feature/automated-update'
+          base: 'main'
