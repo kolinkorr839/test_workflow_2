@@ -10,6 +10,7 @@ jobs:
       contents: write
       pull-requests: write
     steps:
+      # 1. Checkout main first (needed for the peter-evans action to run)
       - uses: actions/checkout@v4
         
       - id: timestamp
@@ -17,6 +18,7 @@ jobs:
         
       - run: date +%Y-%m-%d-%H-%M-%S >> automated_data.txt
         
+      # 2. This step creates the branch and opens the PR, but leaves the runner on 'main'
       - id: create_pr
         uses: peter-evans/create-pull-request@v6
         with:
@@ -26,16 +28,21 @@ jobs:
           branch: 'feature/automated-update-${{ steps.timestamp.outputs.current_time }}'
           base: 'main'
 
-      # FIX: Combining the git commands into one 'run' step and pushing correctly.
-      - name: Force an Empty Commit and Push
+      # 3. FIX: Checkout the new branch and push the empty commit
+      - name: Checkout PR Branch and Push Empty Commit
         run: |
-          # 1. Configure Git (essential for the commit)
+          BRANCH_NAME="feature/automated-update-${{ steps.timestamp.outputs.current_time }}"
+          
+          # Fetch and switch to the new branch created by the previous step
+          git fetch origin $BRANCH_NAME
+          git checkout $BRANCH_NAME
+          
+          # Configure Git
           git config user.name github-actions
           git config user.email github-actions@github.com
 
-          # 2. Make the empty commit
+          # Make the empty commit
           git commit --allow-empty -m "Force a commit"
           
-          # 3. Push the current branch back to the origin
-          # The 'peter-evans' action has already checked out the new branch.
-          git push origin HEAD
+          # Push the commit to the active branch
+          git push origin $BRANCH_NAME
