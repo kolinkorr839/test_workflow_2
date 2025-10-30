@@ -24,6 +24,7 @@ jobs:
       - id: create_pr
         uses: peter-evans/create-pull-request@v6
         with:
+          token: ${{ secrets.PAT_TOKEN }}
           commit-message: 'feat: Automated data update'
           title: 'Automated Data Update: ${{ steps.timestamp.outputs.current_time }}'
           body: 'This PR was created automatically on ${{ steps.timestamp.outputs.current_time }}.'
