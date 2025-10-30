@@ -9,3 +9,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: echo "This workflow ran on a push event at $(date) and successfully checked out the code."
+      
+      - name: Create Random File
+        run: |
+          FILENAME=$(date +'%Y%m%d_%H%M%S').txt
+          echo "This file was created by a GitHub Action at $(date)" > $FILENAME
+          echo "Created file: $FILENAME"
+          ls -l $FILENAME
