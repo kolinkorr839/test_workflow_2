@@ -3,16 +3,30 @@ name: Push Only Check
 on:
   push:
 
+# 1. Set Permissions: Required to allow the GITHUB_TOKEN to push changes
+permissions:
+  contents: write
+
 jobs:
   simple_test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: echo "This workflow ran on a push event at $(date) and successfully checked out the code."
       
+      - run: echo "This workflow ran on a push event at $(date) and successfully checked out the code."
+
       - name: Create Random File
         run: |
+          # Use a stable date format for the filename
           FILENAME=$(date +'%Y%m%d_%H%M%S').txt
           echo "This file was created by a GitHub Action at $(date)" > $FILENAME
           echo "Created file: $FILENAME"
           ls -l $FILENAME
+
+      # 2. Add & Commit the New File
+      - name: Commit and Push New File
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs: Add automated timestamp file"
+          # This tells the action which files to commit (the one we just created)
+          file_pattern: '*.txt'
